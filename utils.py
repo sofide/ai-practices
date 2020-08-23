@@ -33,8 +33,8 @@ def grid_drawer(rows, columns, elements, cell_size=5):
     return grid_to_print
 
 
-def print_grid(*args, **kwargs):
-    print(grid_drawer(*args, **kwargs))
+def print_grid(rows, columns, elements, cell_size=5):
+    print(grid_drawer(rows, columns, elements, cell_size))
 
 
 
