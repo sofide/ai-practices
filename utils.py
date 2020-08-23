@@ -56,11 +56,11 @@ def try_search_method(search_method, problem_class, initial_state):
     print('cantidad de acciones hasta la meta:', len(result.path()))
     print(visor.stats)
 
-    draw_path = input("Do you want to draw the path? [y/N]")
+    draw_path = input("Do you want to draw the path? [y/N]: ")
     if draw_path.lower() == "y":
         for _, state in result.path():
             problem.print_state_representation(state)
-            continue_printing = input("Print the next state [Y/n]")
+            continue_printing = input("Print the next state [Y/n]: ")
 
             if continue_printing.lower() == "n":
                 break

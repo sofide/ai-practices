@@ -15,6 +15,7 @@ el contenido del jarro I a otro jarro.
 En este caso concreto se tienen 4 jarros.
 """
 from collections import defaultdict
+
 from simpleai.search import (
     SearchProblem,
     breadth_first,
