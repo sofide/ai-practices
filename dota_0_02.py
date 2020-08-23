@@ -38,7 +38,6 @@ from simpleai.search import (
     uniform_cost,
     iterative_limited_depth_first,
 )
-from simpleai.search.viewers import BaseViewer
 
 from utils import print_grid, try_search_method
 
