@@ -32,9 +32,8 @@ from simpleai.search import (
     uniform_cost,
     iterative_limited_depth_first,
 )
-from simpleai.search.viewers import BaseViewer
 
-from utils import print_grid
+from utils import print_grid, try_search_method
 
 # a state is defined by a tuple of two values:
 # - a tuple with the position of the rat
@@ -114,28 +113,4 @@ metodos = (
 )
 
 for metodo_busqueda in metodos:
-    print()
-    print('=' * 50)
-
-    print("corriendo:", metodo_busqueda.__name__)
-    visor = BaseViewer()
-    problem = RatabotsProblem(INITIAL_STATE)
-    result = metodo_busqueda(problem, graph_search=True, viewer=visor)
-
-    print('estado final:')
-    print(result.state)
-
-    print('-' * 50)
-
-    print('estadísticas:')
-    print('cantidad de acciones hasta la meta:', len(result.path()))
-    print(visor.stats)
-
-    draw_path = input("Do you want to draw the path? [y/N]")
-    if draw_path.lower() == "y":
-        for _, state in result.path():
-            problem.print_state_representation(state)
-            continue_printing = input("Print the next state [Y/n]")
-
-            if continue_printing.lower() == "n":
-                break
+    try_search_method(metodo_busqueda, RatabotsProblem, INITIAL_STATE)

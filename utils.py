@@ -1,3 +1,6 @@
+from simpleai.search.viewers import BaseViewer
+
+
 def grid_drawer(rows, columns, elements, cell_size=5):
     """
     generate the string of a grid of size `rows` x `columns` with each cell of size
@@ -34,3 +37,30 @@ def print_grid(*args, **kwargs):
     print(grid_drawer(*args, **kwargs))
 
 
+
+def try_search_method(search_method, problem_class, initial_state):
+    print()
+    print('=' * 50)
+
+    print("corriendo:", search_method.__name__)
+    visor = BaseViewer()
+    problem = problem_class(initial_state)
+    result = search_method(problem, graph_search=True, viewer=visor)
+
+    print('estado final:')
+    print(result.state)
+
+    print('-' * 50)
+
+    print('estadísticas:')
+    print('cantidad de acciones hasta la meta:', len(result.path()))
+    print(visor.stats)
+
+    draw_path = input("Do you want to draw the path? [y/N]")
+    if draw_path.lower() == "y":
+        for _, state in result.path():
+            problem.print_state_representation(state)
+            continue_printing = input("Print the next state [Y/n]")
+
+            if continue_printing.lower() == "n":
+                break
