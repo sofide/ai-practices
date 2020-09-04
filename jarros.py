@@ -22,6 +22,8 @@ from simpleai.search import (
     depth_first,
     uniform_cost,
     iterative_limited_depth_first,
+    greedy,
+    astar,
 )
 from simpleai.search.viewers import BaseViewer
 
@@ -82,6 +84,20 @@ class JarrosProblem(SearchProblem):
     def cost(self, state, action, state2):
         return 1
 
+    def heuristic(self, state):
+        water_exceeded_vases = [
+            1
+            for vase_liters in state
+            if vase_liters > 1
+        ]
+        water_missing_vases = [
+            1
+            for vase_liters in state
+            if vase_liters < 1
+        ]
+
+        return max(len(water_missing_vases), len(water_exceeded_vases))
+
     def print_state_representation(self, state):
         elements = defaultdict(list)
         for vase_position, vase_content in enumerate(state):
@@ -91,10 +107,12 @@ class JarrosProblem(SearchProblem):
 
 
 methods = (
-    breadth_first,
-    depth_first,
-    iterative_limited_depth_first,
-    uniform_cost,
+    # breadth_first,
+    # depth_first,
+    # iterative_limited_depth_first,
+    # uniform_cost,
+    greedy,
+    astar,
 )
 
 for search_method in methods:
