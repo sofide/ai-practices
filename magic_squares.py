@@ -1,13 +1,15 @@
 from itertools import combinations
 from random import shuffle
 
-from simpleai.search import SearchProblem, hill_climbing_random_restarts
+from simpleai.search import SearchProblem, hill_climbing
 
 from utils import print_grid
 
 
-SQUARE_SIZE = 4
+SQUARE_SIZE = 10
 MAX_NUMBER = SQUARE_SIZE ** 2
+
+TARGET_TOTAL = sum(range(1, MAX_NUMBER+1)) / SQUARE_SIZE
 
 
 def find(element, state):
@@ -35,16 +37,13 @@ class MagicSquareProblem(SearchProblem):
 
     def value(self, state):
         totals = []
-
         for row in state:
             totals.append(sum(row))
 
         for column in zip(*state):
             totals.append(sum(column))
 
-        target_total = sum(range(1, MAX_NUMBER+1)) / SQUARE_SIZE
-
-        return totals.count(target_total)
+        return totals.count(TARGET_TOTAL)
 
     def generate_random_state(self):
         numbers = list(range(1, MAX_NUMBER + 1))
@@ -69,7 +68,19 @@ class MagicSquareProblem(SearchProblem):
 
 
 if __name__ == "__main__":
-    problem = MagicSquareProblem()
-    result =  hill_climbing_random_restarts(problem, 1000)
+    expected_value = SQUARE_SIZE * 2
+    iterations = 0
+    while True:
+        iterations += 1
+        random_state = MagicSquareProblem().generate_random_state()
+        problem = MagicSquareProblem(random_state)
+        result = hill_climbing(problem, 1000)
+        if result.value == expected_value:
+            print("solution found! Iterations:", iterations)
+            break
+        if iterations % 10 == 0:
+            print(f"{iterations} iterations and the solution hasn't been found yet :(")
+
+
     problem.print_state(result.state)
     print("value:", problem.value(result.state))
