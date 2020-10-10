@@ -48,7 +48,11 @@ def try_search_method(search_method, problem_class, initial_state):
     result = search_method(problem, graph_search=True, viewer=visor)
 
     print('estado final:')
-    print(result.state)
+    if result is None:
+        print("RESULTADO NO ENCONTRADO")
+        return
+    else:
+        print(result.state)
 
     print('-' * 50)
 
