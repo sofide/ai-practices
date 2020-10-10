@@ -16,14 +16,16 @@ from simpleai.search import (
 
 from utils import print_grid, try_search_method
 
-BOARD_SIZE = 8
+ORIGINAL_BOARD_SIZE = 8
+COLUMNS = 4
+ROWS = 3
 
 HORSE_INITIAL_POSITION = (0, 0)
 
 AVAILABLE_POSITIONS_IN_INITIAL_STATE = tuple(
     (row, column)
-    for row in range(BOARD_SIZE)
-    for column in range(BOARD_SIZE)
+    for row in range(ROWS)
+    for column in range(COLUMNS)
     if (row, column) != HORSE_INITIAL_POSITION
 )
 
@@ -42,14 +44,14 @@ class CaballeroProblem(SearchProblem):
         (horse_row, horse_column), available_positions = state
 
         posible_movements = [
-            (horse_row + 3, horse_column + 1),
-            (horse_row + 3, horse_column - 1),
-            (horse_row - 3, horse_column + 1),
-            (horse_row - 3, horse_column - 1),
-            (horse_row + 1, horse_column + 3),
-            (horse_row + 1, horse_column - 3),
-            (horse_row - 1, horse_column + 3),
-            (horse_row - 1, horse_column - 3),
+            (horse_row + 2, horse_column + 1),
+            (horse_row + 2, horse_column - 1),
+            (horse_row - 2, horse_column + 1),
+            (horse_row - 2, horse_column - 1),
+            (horse_row + 1, horse_column + 2),
+            (horse_row + 1, horse_column - 2),
+            (horse_row - 1, horse_column + 2),
+            (horse_row - 1, horse_column - 2),
         ]
 
         posible_actions = [
@@ -77,7 +79,7 @@ class CaballeroProblem(SearchProblem):
             "C": horse,
             "X": available_positions,
         }
-        print_grid(BOARD_SIZE, BOARD_SIZE, elements)
+        print_grid(ROWS, COLUMNS, elements)
 
 
 methods = (
