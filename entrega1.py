@@ -139,10 +139,10 @@ class MercadoArtificalProblem(SearchProblem):
         return posible_actions
 
     def result(self, state, action):
+        print("-"*50)
         print("IN RESULT")
         print("state:", state)
         print("action:", action)
-        print("-"*50)
         trucks_info, packages_info = state
         trucks_dict = {
             truck_id: (city, oil)
@@ -270,7 +270,8 @@ def planear_camiones(metodo, camiones=TRUCKS_EXAMPLE, paquetes=PACKAGES_EXAMPLE,
 
     method = search_methods[metodo]
 
-    visor = ConsoleViewer()
+    # visor = ConsoleViewer()
+    visor = BaseViewer()
     result = method(problem, graph_search=True, viewer=visor)
 
     if debug:
