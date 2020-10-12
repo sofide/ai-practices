@@ -221,7 +221,23 @@ class MercadoArtificalProblem(SearchProblem):
                 pkg_estimated_cost += pkg_city_shortest_conn + destination_shortest_conn
 
             if not current_city in trucks_locations:
-                pkg_estimated_cost += pkg_city_shortest_conn
+                nearest_pkg_cities = [
+                    adjacent_city
+                    for adjacent_city, distance in CONNECTIONS_DICT[current_city].items()
+                    if distance == pkg_city_shortest_conn
+                ]
+
+                for near_city in nearest_pkg_cities:
+                    if near_city in trucks_locations:
+                        pkg_estimated_cost += pkg_city_shortest_conn
+                        break
+
+                else:
+                    trucks_shortest_conn = min(
+                        min(CONNECTIONS_DICT[truck_city].values())
+                        for truck_city in trucks_locations
+                    )
+                    pkg_estimated_cost += pkg_city_shortest_conn + trucks_shortest_conn
 
             pkgs_to_move_in_current_city = cities_with_pkg_to_move.count(current_city)
 
