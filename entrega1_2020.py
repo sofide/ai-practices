@@ -105,7 +105,7 @@ class MercadoArtificalProblem(SearchProblem):
             for connected_city, km in CONNECTIONS_DICT[truck_city].items():
                 oil_for_trip = km / KM_FOR_OIL_LITER
                 if oil_for_trip < oil_in_truck:
-                    posible_trips.append(connected_city, oil_for_trip)
+                    posible_trips.append((connected_city, oil_for_trip))
 
             posible_packages_to_take = [
                 package_id
@@ -140,7 +140,7 @@ class MercadoArtificalProblem(SearchProblem):
         if city_to_go in SEDES:
             oil_in_moved_truck = self.trucks_liters[truck_id]
         else:
-            oil_in_moved_truck = trucks_dict[truck][1] - oil_for_trip
+            oil_in_moved_truck = trucks_dict[truck_id][1] - oil_for_trip
 
         moved_truck_new_state = (truck_id, city_to_go, oil_for_trip)
 
