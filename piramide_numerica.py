@@ -42,7 +42,7 @@ DOMAINS = {
     for variable in VARIABLES
 }
 
-DOMAINS["00"] = [48]
+DOMAINS["00"] = [44]
 DOMAINS["30"] = [5]
 DOMAINS["31"] = [8]
 DOMAINS["33"] = [3]
@@ -66,7 +66,7 @@ def box_sum(variables, values):
 CONSTRAINTS.append((("00", "10", "11"), box_sum))
 CONSTRAINTS.append((("10", "20", "21"), box_sum))
 CONSTRAINTS.append((("11", "21", "22"), box_sum))
-CONSTRAINTS.append((("20", "30", "11"), box_sum))
+CONSTRAINTS.append((("20", "30", "31"), box_sum))
 CONSTRAINTS.append((("21", "31", "32"), box_sum))
 CONSTRAINTS.append((("22", "32", "33"), box_sum))
 
