@@ -10,7 +10,7 @@ from simpleai.search import (
     greedy,
     astar,
 )
-from simpleai.search.viewers import BaseViewer, ConsoleViewer
+from simpleai.search.viewers import BaseViewer, ConsoleViewer, WebViewer
 
 RAFAELA = "rafaela"
 SUNCHALES = "sunchales"
@@ -76,10 +76,10 @@ class MercadoArtificalProblem(SearchProblem):
         super().__init__(*args, **kwargs)
 
     def is_goal(self, state):
-        print("-"*50)
-        print("IN IS GOAL")
-        print("state:", state)
-        print("-"*50)
+        # print("-"*50)
+        # print("IN IS GOAL")
+        # print("state:", state)
+        # print("-"*50)
         trucks_info, packages_info = state
 
         if packages_info != self.packages_goal:
@@ -89,7 +89,7 @@ class MercadoArtificalProblem(SearchProblem):
             # los camiones deben estar en alguna de las sedes
             if truck[1] not in SEDES:
                 return False
-        print("IS GOAL TRUE")
+        # print("IS GOAL TRUE")
         return True
 
     def actions(self, state):
@@ -101,9 +101,9 @@ class MercadoArtificalProblem(SearchProblem):
         - 0.7: liters of oil spended in the trip
         - ('p1', 'p2'): packages to transport in the trip
         """
-        print("-"*50)
-        print("IN ACTIONS")
-        print("state:", state)
+        # print("-"*50)
+        # print("IN ACTIONS")
+        # print("state:", state)
         trucks_info, packages_info = state
         posible_actions = []
         for truck in trucks_info:
@@ -124,7 +124,7 @@ class MercadoArtificalProblem(SearchProblem):
             packages_combinations = []
 
             # any combination of packages, from 0 to all.
-            for comb_qty in range(len(posible_packages_to_take)):
+            for comb_qty in range(len(posible_packages_to_take) + 1):
                 qty_combinations = combinations(posible_packages_to_take, comb_qty)
                 packages_combinations.extend(qty_combinations)
 
@@ -134,15 +134,15 @@ class MercadoArtificalProblem(SearchProblem):
                 for packages in packages_combinations
             )
 
-        print("RETURNES ACTIONS:", actions)
-        print("-"*50)
+        # print("RETURNES ACTIONS:", posible_actions)
+        # print("-"*50)
         return posible_actions
 
     def result(self, state, action):
-        print("-"*50)
-        print("IN RESULT")
-        print("state:", state)
-        print("action:", action)
+        # print("-"*50)
+        # print("IN RESULT")
+        # print("state:", state)
+        # print("action:", action)
         trucks_info, packages_info = state
         trucks_dict = {
             truck_id: (city, oil)
@@ -156,7 +156,7 @@ class MercadoArtificalProblem(SearchProblem):
         else:
             oil_in_moved_truck = trucks_dict[truck_id][1] - oil_for_trip
 
-        moved_truck_new_state = (truck_id, city_to_go, oil_for_trip)
+        moved_truck_new_state = (truck_id, city_to_go, oil_in_moved_truck)
 
         trucks_new_state = [
             truck_state for truck_state in trucks_info
@@ -173,24 +173,26 @@ class MercadoArtificalProblem(SearchProblem):
             packages_new_state.append((package_id, package_city))
 
         result_to_return =  tuple(trucks_new_state), tuple(packages_new_state)
-        print("RETURNED RESULT:", result_to_return)
-        print("-"*50)
+        # print("RETURNED RESULT:", result_to_return)
+        # print("-"*50)
         return result_to_return
 
     def cost(self, state, action, state2):
         """
         The cost of an action is equal to the oil spended in the trip.
         """
-        print("IN COST")
-        print("state:", state)
-        print("action:", action)
-        print("-"*50)
+        # print("-"*50)
+        # print("IN COST")
+        # print("state:", state)
+        # print("action:", action)
+        # print("RETURNED COST:", action[2])
+        # print("-"*50)
         return action[2]
 
     def heuristic(self, state):
+        print("-"*50)
         print("IN HEURISTIC")
         print("state:", state)
-        print("-"*50)
         trucks_info, packages_info = state
         trucks_locations = [truck[1] for truck in trucks_info]
 
@@ -223,6 +225,8 @@ class MercadoArtificalProblem(SearchProblem):
 
             pkgs_to_move_in_current_city = cities_with_pkg_to_move.count(current_city)
 
+            print(f"heuristic for {package_id}: {pkg_estimated_cost} / {pkgs_to_move_in_current_city}")
+            print(f"heuristic for {package_id}: {pkg_estimated_cost / pkgs_to_move_in_current_city}")
             estimated_km += pkg_estimated_cost / pkgs_to_move_in_current_city
 
         trucks_not_in_sede = [
@@ -234,19 +238,30 @@ class MercadoArtificalProblem(SearchProblem):
         extra_trucks_to_move = len(trucks_not_in_sede) - len(cities_set)
         if extra_trucks_to_move > 0:
             shortest_sede_connection = min(
-                min(conn.values() for conn in CONNECTIONS_DICT[sede_city])
+                min(conn for conn in CONNECTIONS_DICT[sede_city].values())
                 for sede_city in SEDES
             )
 
+            shortest_con_per_city = [
+                min(CONNECTIONS_DICT[truck_city].values())
+                for truck_city in trucks_not_in_sede
+            ]
+            print("shortest per city", shortest_con_per_city)
             shortest_city_trucks_connection = min(
-                min(conn.values() for conn in CONNECTIONS_DICT[truck_city])
-                for truck_city in cities_set
+                shortest_con_per_city
             )
 
+            print(f"heuristic for EXTRA TRUCKS: {extra_trucks_to_move} * max({shortest_sede_connection}, {shortest_city_trucks_connection})")
+            print(f"heuristic for EXTRA TRUCKS: {extra_trucks_to_move * max(shortest_sede_connection, shortest_city_trucks_connection)}")
             estimated_km += extra_trucks_to_move * max(
                 shortest_sede_connection, shortest_city_trucks_connection
             )
 
+
+        print("estimated km in heuristic:", estimated_km)
+
+        print("RETURNED HEURISTIC:", estimated_km / KM_FOR_OIL_LITER)
+        print("-"*50)
         return estimated_km / KM_FOR_OIL_LITER
 
 
@@ -270,8 +285,11 @@ def planear_camiones(metodo, camiones=TRUCKS_EXAMPLE, paquetes=PACKAGES_EXAMPLE,
 
     method = search_methods[metodo]
 
-    # visor = ConsoleViewer()
-    visor = BaseViewer()
+    if debug:
+        visor = ConsoleViewer()
+        # visor = WebViewer()
+    else:
+        visor = BaseViewer()
     result = method(problem, graph_search=True, viewer=visor)
 
     if debug:
@@ -281,16 +299,22 @@ def planear_camiones(metodo, camiones=TRUCKS_EXAMPLE, paquetes=PACKAGES_EXAMPLE,
         print("FINAL STATE:")
         print(result.state)
 
-        for i, step in enumerate(result.path):
+        for i, step in enumerate(result.path()):
             cont = input("print step by step? Y/n")
             if cont.upper() == "N":
                 break
 
             print(f"----------- STEP {i} ----------")
-            action, result = step
+            action, state = step
 
             print("ACTION")
             print(action)
+
+            print("STATE")
+            print(state)
+
+
+    return [action for action, _ in result.path() if action is not None]
 
 
 if __name__ == "__main__":
@@ -301,6 +325,7 @@ if __name__ == "__main__":
         ("p1", RAFAELA, ESPERANZA),
         ("p2", RAFAELA, SANTA_FE),
         ("p3", SANTA_FE, ESPERANZA),
-
     ]
+    camiones = [('c1', 'rafaela', 1.5), ('c2', 'santa_fe', 9999)]
+    paquetes = [('p1', 'sunchales', 'sauce_viejo')]
     planear_camiones("astar", camiones, paquetes, debug=True)
