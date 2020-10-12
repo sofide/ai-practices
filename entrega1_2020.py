@@ -10,7 +10,7 @@ from simpleai.search import (
     greedy,
     astar,
 )
-from simpleai.search.viewers import BaseViewer
+from simpleai.search.viewers import BaseViewer, ConsoleViewer
 
 RAFAELA = "rafaela"
 SUNCHALES = "sunchales"
@@ -76,6 +76,10 @@ class MercadoArtificalProblem(SearchProblem):
         super().__init__(*args, **kwargs)
 
     def is_goal(self, state):
+        print("-"*50)
+        print("IN IS GOAL")
+        print("state:", state)
+        print("-"*50)
         trucks_info, packages_info = state
 
         if packages_info != self.packages_goal:
@@ -85,6 +89,7 @@ class MercadoArtificalProblem(SearchProblem):
             # los camiones deben estar en alguna de las sedes
             if truck[1] not in SEDES:
                 return False
+        print("IS GOAL TRUE")
         return True
 
     def actions(self, state):
@@ -96,6 +101,9 @@ class MercadoArtificalProblem(SearchProblem):
         - 0.7: liters of oil spended in the trip
         - ('p1', 'p2'): packages to transport in the trip
         """
+        print("-"*50)
+        print("IN ACTIONS")
+        print("state:", state)
         trucks_info, packages_info = state
         posible_actions = []
         for truck in trucks_info:
@@ -126,9 +134,15 @@ class MercadoArtificalProblem(SearchProblem):
                 for packages in packages_combinations
             )
 
+        print("RETURNES ACTIONS:", actions)
+        print("-"*50)
         return posible_actions
 
     def result(self, state, action):
+        print("IN RESULT")
+        print("state:", state)
+        print("action:", action)
+        print("-"*50)
         trucks_info, packages_info = state
         trucks_dict = {
             truck_id: (city, oil)
@@ -158,15 +172,25 @@ class MercadoArtificalProblem(SearchProblem):
 
             packages_new_state.append((package_id, package_city))
 
-        return tuple(trucks_new_state), tuple(packages_new_state)
+        result_to_return =  tuple(trucks_new_state), tuple(packages_new_state)
+        print("RETURNED RESULT:", result_to_return)
+        print("-"*50)
+        return result_to_return
 
     def cost(self, state, action, state2):
         """
         The cost of an action is equal to the oil spended in the trip.
         """
+        print("IN COST")
+        print("state:", state)
+        print("action:", action)
+        print("-"*50)
         return action[2]
 
     def heuristic(self, state):
+        print("IN HEURISTIC")
+        print("state:", state)
+        print("-"*50)
         trucks_info, packages_info = state
         trucks_locations = [truck[1] for truck in trucks_info]
 
@@ -246,7 +270,7 @@ def planear_camiones(metodo, camiones=TRUCKS_EXAMPLE, paquetes=PACKAGES_EXAMPLE,
 
     method = search_methods[metodo]
 
-    visor = BaseViewer()
+    visor = ConsoleViewer()
     result = method(problem, graph_search=True, viewer=visor)
 
     if debug:
@@ -269,5 +293,13 @@ def planear_camiones(metodo, camiones=TRUCKS_EXAMPLE, paquetes=PACKAGES_EXAMPLE,
 
 
 if __name__ == "__main__":
-    planear_camiones("astar", debug=True)
+    camiones = [
+        ("c1", RAFAELA, 40),
+    ]
+    paquetes = [
+        ("p1", RAFAELA, ESPERANZA),
+        ("p2", RAFAELA, SANTA_FE),
+        ("p3", SANTA_FE, ESPERANZA),
 
+    ]
+    planear_camiones("astar", camiones, paquetes, debug=True)
