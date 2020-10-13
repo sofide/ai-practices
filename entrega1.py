@@ -218,8 +218,11 @@ class MercadoArtificalProblem(SearchProblem):
                 pkg_estimated_cost += CONNECTIONS_DICT[current_city][destination]
             else:
                 destination_shortest_conn = min(CONNECTIONS_DICT[destination].values())
+                print(f"parcial heuristic for  [MOVE PKG] {package_id}: {pkg_city_shortest_conn} + {destination_shortest_conn}")
                 pkg_estimated_cost += pkg_city_shortest_conn + destination_shortest_conn
 
+            print("current_city:", current_city)
+            print("trucks_locations:", trucks_locations)
             if not current_city in trucks_locations:
                 nearest_pkg_cities = [
                     adjacent_city
@@ -229,6 +232,7 @@ class MercadoArtificalProblem(SearchProblem):
 
                 for near_city in nearest_pkg_cities:
                     if near_city in trucks_locations:
+                        print(f"parcial heuristic for [TRUCK ARRIVING] {package_id}: {pkg_city_shortest_conn}")
                         pkg_estimated_cost += pkg_city_shortest_conn
                         break
 
@@ -237,6 +241,7 @@ class MercadoArtificalProblem(SearchProblem):
                         min(CONNECTIONS_DICT[truck_city].values())
                         for truck_city in trucks_locations
                     )
+                    print(f"parcial heuristic for [TRUCK ARRIVING] {package_id}: {pkg_city_shortest_conn} + {trucks_shortest_conn}")
                     pkg_estimated_cost += pkg_city_shortest_conn + trucks_shortest_conn
 
             pkgs_to_move_in_current_city = cities_with_pkg_to_move.count(current_city)
