@@ -1,6 +1,7 @@
 """
 Resolviendo el juego de liquiditos "Sort Em All"
 """
+import math
 from collections import defaultdict, Counter
 
 from simpleai.search import (
@@ -92,8 +93,9 @@ class LiquiditosProblem(SearchProblem):
             colors_in_tube = len(set(tube)) # emptyness count as a color ("green", "green", None) == 2 colors
 
             if colors_in_tube == 1 and None in tube:
-                # empty tube can receive liquid of any color
+                # empty tubes can receive liquid of any color
                 possible_destination_tubes.append((tube_index, ANY_COLOR))
+                # continue because empty tubes cannot give liquid
                 continue
 
             if colors_in_tube == 1 and len(tube) == GOAL_TUBES_SIZE:
@@ -181,6 +183,13 @@ class LiquiditosProblem(SearchProblem):
             if mixed_colors_in_tube:
                 min_pending_moves += mixed_colors_in_tube -1
 
+        tubes_in_goal = sum(1 for tube in state if len(set(tube)) == 1)
+        pending_tubes = len(state) - tubes_in_goal
+
+        heuristic_by_color = min_pending_moves
+        heuristic_by_tubes = math.ceil(pending_tubes / 2)
+        min_pending_moves = max(heuristic_by_color, heuristic_by_tubes)
+
         return min_pending_moves
 
     def print_state_representation(self, state):
@@ -237,12 +246,17 @@ methods = (
     # depth_first,
     # iterative_limited_depth_first,
     # uniform_cost,
-    # greedy,
+    greedy,
     astar,
 )
 
-
-STATE = INITIAL_STATE_EASY
+ALL_STATES = [
+    INITIAL_STATE_TESTING,
+    INITIAL_STATE_COMPLEX,
+    INITIAL_STATE_EASY,
+    INITIAL_STATE_INTERMEDIATE,
+]
+STATE = INITIAL_STATE_COMPLEX
 
 for search_method in methods:
     check_state(STATE)
