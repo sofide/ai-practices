@@ -17,7 +17,7 @@ from simpleai.search.viewers import BaseViewer
 from utils import print_grid, try_search_method
 
 # STATE: each tuple represents a tube
-INITIAL_STATE_SIMPLE = (
+INITIAL_STATE_TESTING = (
     ("verde", "rojo", "verde", "rojo"),
     ("rojo", "verde", "rojo", "verde"),
     (None, None, None),
@@ -49,6 +49,19 @@ INITIAL_STATE_INTERMEDIATE = (
     ("naranja", "azul", "verde", "naranja"),
     ("crema", "rosado", "amarillo", "verdecito"),
     ("celeste", "lila", "celeste", "crema"),
+    (None, None, None, None),
+    (None, None, None, None),
+)
+
+INITIAL_STATE_EASY = (
+    ("rosado", "crema", "naranja", "lila"),
+    ("naranja", "azul", "lila", "rosado"),
+    ("verde", "azul", "crema", "rojo"),
+    ("naranja", "verde", "naranja", "rojo"),
+    ("lila", "azul", "verde", "rosado"),
+    ("crema", "celeste", "lila", "verde"),
+    ("rojo", "rosado", "celeste", "azul"),
+    ("celeste", "rojo", "crema", "celeste"),
     (None, None, None, None),
     (None, None, None, None),
 )
@@ -163,6 +176,7 @@ class LiquiditosProblem(SearchProblem):
             for color in tube:
                 if color != last_color:
                     mixed_colors_in_tube += 1
+                last_color = color
 
             if mixed_colors_in_tube:
                 min_pending_moves += mixed_colors_in_tube -1
@@ -228,7 +242,7 @@ methods = (
 )
 
 
-STATE = INITIAL_STATE_SIMPLE
+STATE = INITIAL_STATE_EASY
 
 for search_method in methods:
     check_state(STATE)
