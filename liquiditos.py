@@ -18,8 +18,8 @@ from utils import print_grid, try_search_method
 
 # STATE: each tuple represents a tube
 INITIAL_STATE_SIMPLE = (
-    ("rojo", "rojo", "rojo", "verde"),
-    ("verde", "verde", "verde", "rojo"),
+    ("verde", "rojo", "rojo", "rojo"),
+    ("rojo", "verde", "verde", "verde"),
     (None, None),
 )
 
@@ -46,9 +46,9 @@ class LiquiditosProblem(SearchProblem):
         possible_destination_tubes = []
 
         for tube_index, tube in enumerate(state):
-            colors_in_tube = set(tube) # emptyness count as a color ("green", "green", None) == 2 colors
+            colors_in_tube = len(set(tube)) # emptyness count as a color ("green", "green", None) == 2 colors
 
-            if colors_in_tube == 1 and None in colors_in_tube:
+            if colors_in_tube == 1 and None in tube:
                 # empty tube can receive liquid of any color
                 possible_destination_tubes.append((tube_index, ANY_COLOR))
                 continue
@@ -72,13 +72,13 @@ class LiquiditosProblem(SearchProblem):
 
             possible_origin_tubes.append((tube_index, top_color))
 
-            possible_actions = []
-            for origin_index, origin_color in possible_origin_tubes:
-                for destination_index, destination_color in possible_destination_tubes:
-                    if origin_index != destination_index and destination_color in {origin_color, ANY_COLOR}:
-                        possible_actions.append(origin_index, destination_index)
+        possible_actions = []
+        for origin_index, origin_color in possible_origin_tubes:
+            for destination_index, destination_color in possible_destination_tubes:
+                if origin_index != destination_index and destination_color in {origin_color, ANY_COLOR}:
+                    possible_actions.append((origin_index, destination_index))
 
-            return possible_actions
+        return possible_actions
 
     def result(self, state, action):
         origin_index, destination_index = action
@@ -111,6 +111,7 @@ class LiquiditosProblem(SearchProblem):
         for slot_to_fill in range(first_slot_to_fill, first_slot_to_fill + liquid_to_move):
             destination_tube[slot_to_fill] = color_to_transfer
 
+        state = list(state)
         state[origin_index] = tuple(origin_tube)
         state[destination_index] = tuple(destination_tube)
 
@@ -150,9 +151,10 @@ class LiquiditosProblem(SearchProblem):
                 max_tube_size = tube_size
 
             for color_index, color in enumerate(tube):
-                elements[color].append((tube_index, color_index))
+                if color:
+                    elements[color].append((color_index, tube_index))
 
-        max_color_size = len(max(elements.keys, key=len))
+        max_color_size = len(max(elements.keys(), key=len))
 
         print_grid(rows=max_tube_size, columns=tubes_quantity, elements=elements, cell_size=max_color_size+2)
 
