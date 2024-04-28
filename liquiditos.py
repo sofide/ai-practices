@@ -140,23 +140,35 @@ class LiquiditosProblem(SearchProblem):
         return min_pending_moves
 
     def print_state_representation(self, state):
+        background = "|"
         tubes_quantity = len(state)
-        max_tube_size = 0
+        max_tube_size = len(max(state, key=len))
 
         elements = defaultdict(list)
 
         for tube_index, tube in enumerate(state):
-            tube_size = len(tube)
-            if tube_size > max_tube_size:
-                max_tube_size = tube_size
+            # compensation for shorter tubes
+            size_compensation = max_tube_size - len(tube)
+            for background_slot in range(size_compensation):
+                elements[background].append((background_slot, tube_index))
 
             for color_index, color in enumerate(tube):
                 if color:
-                    elements[color].append((color_index, tube_index))
+                    elements[color].append((color_index + size_compensation, tube_index))
 
-        max_color_size = len(max(elements.keys(), key=len))
+        max_color_len_size = len(max(elements.keys(), key=len))
+        cell_size = max_color_len_size + 2
 
-        print_grid(rows=max_tube_size, columns=tubes_quantity, elements=elements, cell_size=max_color_size+2)
+        # adjust background
+        elements[background * cell_size] = elements[background]
+        del elements[background]
+
+        print_grid(
+            rows=max_tube_size,
+            columns=tubes_quantity,
+            elements=elements,
+            cell_size=cell_size,
+        )
 
 
 methods = (
