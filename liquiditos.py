@@ -1,7 +1,7 @@
 """
 Resolviendo el juego de liquiditos "Sort Em All"
 """
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 from simpleai.search import (
     SearchProblem,
@@ -18,9 +18,39 @@ from utils import print_grid, try_search_method
 
 # STATE: each tuple represents a tube
 INITIAL_STATE_SIMPLE = (
-    ("verde", "rojo", "rojo", "rojo"),
-    ("rojo", "verde", "verde", "verde"),
-    (None, None),
+    ("verde", "rojo", "verde", "rojo"),
+    ("rojo", "verde", "rojo", "verde"),
+    (None, None, None),
+    (None, None, None),
+)
+
+INITIAL_STATE_COMPLEX = (
+    ("verdecito", "naranja", "rojo", "azul"),
+    ("rojo", "verdecito", "rojo", "verde"),
+    ("lila", "celeste", "crema", "verde"),
+    ("verde", "azul", "celeste", "rosado"),
+    ("naranja", "azul", "celeste", "verde"),
+    ("naranja", "crema", "rosado", "rojo"),
+    ("naranja", "verdecito", "lila", "azul"),
+    ("verdecito", "crema", "celeste", "rosado"),
+    ("crema", "lila", "rosado", "lila"),
+    (None, None, None),
+    (None, None, None),
+)
+
+INITIAL_STATE_INTERMEDIATE = (
+    ("verdecito", "rojo", "verde", "rosado"),
+    ("amarillo", "celeste", "lila", "verdecito"),
+    ("azul", "naranja", "crema", "naranja"),
+    ("crema", "verde", "rojo", "verde"),
+    ("rosado", "verdecito", "amarillo", "lila"),
+    ("azul", "lila", "celeste", "rojo"),
+    ("azul", "rosado", "amarillo", "rojo"),
+    ("naranja", "azul", "verde", "naranja"),
+    ("crema", "rosado", "amarillo", "verdecito"),
+    ("celeste", "lila", "celeste", "crema"),
+    (None, None, None, None),
+    (None, None, None, None),
 )
 
 GOAL_TUBES_SIZE = 4  # in some level there can be smaller tubes that shouldn't be filled in the goal
@@ -171,14 +201,35 @@ class LiquiditosProblem(SearchProblem):
         )
 
 
+def check_state(state):
+    colors = Counter()
+
+    for tube in state:
+        if None in tube:
+            assert set(tube) == {None}
+            continue
+        colors.update(tube)
+
+    for color, color_q in colors.items():
+        print(color_q, color)
+
+    max_color = max(colors.values())
+    min_color = min(colors.values())
+
+    assert max_color == min_color
+
 methods = (
     # breadth_first,
     # depth_first,
     # iterative_limited_depth_first,
     # uniform_cost,
-    greedy,
+    # greedy,
     astar,
 )
 
+
+STATE = INITIAL_STATE_SIMPLE
+
 for search_method in methods:
-    try_search_method(search_method, LiquiditosProblem, INITIAL_STATE_SIMPLE)
+    check_state(STATE)
+    try_search_method(search_method, LiquiditosProblem, STATE)
