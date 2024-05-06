@@ -67,6 +67,22 @@ INITIAL_STATE_EASY = (
     (None, None, None, None),
 )
 
+INITIAL_STATE_2024_05_01 = (
+    ("amarillo", "azul", "naranja", "azul"),
+    ("gris", "rosado", "naranja", "celeste"),
+    ("celeste", "rojo", "naranja", "lila"),
+    ("amarillo", "celeste", "naranja", "verdecito"),
+    ("azul", "crema", "verde", "gris"),
+    ("azul", "celeste", "verde", "rosado"),
+    ("rosado", "lila", "rojo", "verdecito"),
+    ("verdecito", "lila", "verde", "rojo"),
+    ("lila", "rojo", "verdecito", "rosado"),
+    ("crema", "gris", "crema", "verde"),
+    ("amarillo", "gris", "amarillo", "crema"),
+    (None, None, None),
+    (None, None, None),
+)
+
 GOAL_TUBES_SIZE = 4  # in some level there can be smaller tubes that shouldn't be filled in the goal
 
 ANY_COLOR = "any_color"
@@ -247,7 +263,7 @@ methods = (
     # iterative_limited_depth_first,
     # uniform_cost,
     greedy,
-    astar,
+    # astar,
 )
 
 ALL_STATES = [
@@ -256,7 +272,7 @@ ALL_STATES = [
     INITIAL_STATE_EASY,
     INITIAL_STATE_INTERMEDIATE,
 ]
-STATE = INITIAL_STATE_COMPLEX
+STATE = INITIAL_STATE_2024_05_01
 
 for search_method in methods:
     check_state(STATE)
